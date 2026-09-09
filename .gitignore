@@ -1,0 +1,13 @@
+academica_core_service
+main
+
+*.env
+.env
+
+swagger/**
+!swagger/*.json
+!swagger/*.yml
+
+.idea/
+.vscode/
+*.log
