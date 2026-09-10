@@ -49,6 +49,30 @@ go build -o main .
 docker compose up --build
 ```
 
+## CI/CD
+
+El repositorio sigue los lineamientos OATI para APIs Go/Beego:
+
+- `.drone.yml`: ejecuta SonarQube, `go vet`, validación de `go fmt`, `golangci-lint`, compilación, publicación en ECR y despliegue ECS.
+- `sonar-project.properties`: registra el proyecto `academica_core_service` y usa la estructura base Go.
+- `Dockerfile`: empaqueta el binario `main` y `conf/app.conf` en una imagen distroless.
+- `.dockerignore`: evita enviar `.env`, Git, logs y artefactos locales al contexto de Docker.
+
+Secretos requeridos en Drone:
+
+```txt
+SONAR_HOST
+SONAR_TOKEN
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_REGION
+```
+
+Convención de despliegue:
+
+- `release/*`: publica tags `${DRONE_COMMIT:0:7}` y `release`, despliega servicio ECS `academica_core_service_test` en cluster `test`.
+- `master`: publica tags `${DRONE_COMMIT:0:7}` y `latest`, despliega servicio ECS `academica_core_service_prod` en cluster `oas`.
+
 ## Estructura
 
 - `main.go`: carga `.env`, construye la cadena Oracle, inicializa DB y arranca Beego.
