@@ -22,9 +22,8 @@ import (
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		logs.Warn("archivo .env no encontrado, se usan variables de entorno del sistema")
-	}
+	_ = godotenv.Load()
+
 	loadDatabaseConfigFromEnv()
 
 	conn, err := database.BuildOracleConnectionString()
@@ -39,15 +38,23 @@ func main() {
 	}
 
 	allowedOrigins := []string{"*.udistrital.edu.co"}
+
 	if beego.BConfig.RunMode == beego.DEV {
 		allowedOrigins = []string{"*"}
+
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 	}
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowOrigins: allowedOrigins,
-		AllowMethods: []string{"GET", "PUT", "POST", "DELETE", "OPTIONS"},
+		AllowMethods: []string{
+			"GET",
+			"PUT",
+			"POST",
+			"DELETE",
+			"OPTIONS",
+		},
 		AllowHeaders: []string{
 			"Accept",
 			"Authorization",
@@ -55,7 +62,9 @@ func main() {
 			"User-Agent",
 			"X-Amzn-Trace-Id",
 		},
-		ExposeHeaders:    []string{"Content-Length"},
+		ExposeHeaders: []string{
+			"Content-Length",
+		},
 		AllowCredentials: true,
 	}))
 
@@ -65,14 +74,19 @@ func main() {
 	xray.Init()
 
 	beego.ErrorController(&customerrorv2.CustomErrorController{})
+
 	beego.Run()
 }
 
 func loadDatabaseConfigFromEnv() {
 	if runMode := os.Getenv("ACADEMICA_CORE_SERVICE_RUN_MODE"); runMode != "" {
 		beego.BConfig.RunMode = runMode
+
 		if err := beego.AppConfig.Set("runmode", runMode); err != nil {
-			logs.Warn("no se pudo configurar runmode desde ACADEMICA_CORE_SERVICE_RUN_MODE: %v", err)
+			logs.Warn(
+				"no se pudo configurar runmode desde ACADEMICA_CORE_SERVICE_RUN_MODE: %v",
+				err,
+			)
 		}
 	}
 
@@ -89,7 +103,12 @@ func loadDatabaseConfigFromEnv() {
 	for configKey, envKey := range envConfig {
 		if value := os.Getenv(envKey); value != "" {
 			if err := beego.AppConfig.Set(configKey, value); err != nil {
-				logs.Warn("no se pudo configurar %s desde %s: %v", configKey, envKey, err)
+				logs.Warn(
+					"no se pudo configurar %s desde %s: %v",
+					configKey,
+					envKey,
+					err,
+				)
 			}
 		}
 	}
