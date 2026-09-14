@@ -6,17 +6,17 @@ import (
 	_ "github.com/sijms/go-ora/v2"
 	_ "github.com/udistrital/academica_core_service/routers"
 
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/logs"
-	"github.com/astaxie/beego/plugins/cors"
+	"github.com/beego/beego/v2/core/logs"
+	beego "github.com/beego/beego/v2/server/web"
+	"github.com/beego/beego/v2/server/web/filter/cors"
 	"github.com/joho/godotenv"
 
-	apistatus "github.com/udistrital/utils_oas/apiStatusLib"
-	"github.com/udistrital/utils_oas/auditoria"
-	"github.com/udistrital/utils_oas/customerrorv2"
-	"github.com/udistrital/utils_oas/database"
-	"github.com/udistrital/utils_oas/security"
-	"github.com/udistrital/utils_oas/xray"
+	apistatus "github.com/udistrital/utils_oas/v2/apiStatusLib"
+	"github.com/udistrital/utils_oas/v2/auditoria"
+	"github.com/udistrital/utils_oas/v2/customerror"
+	"github.com/udistrital/utils_oas/v2/database"
+	"github.com/udistrital/utils_oas/v2/security"
+	"github.com/udistrital/utils_oas/v2/xray"
 
 	"github.com/udistrital/academica_core_service/models"
 )
@@ -73,7 +73,7 @@ func main() {
 	security.SetSecurityHeaders()
 	xray.Init()
 
-	beego.ErrorController(&customerrorv2.CustomErrorController{})
+	beego.ErrorController(&customerror.CustomErrorController{})
 
 	beego.Run()
 }
