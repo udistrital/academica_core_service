@@ -5,8 +5,8 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/logs"
+	"github.com/beego/beego/v2/core/logs"
+	beego "github.com/beego/beego/v2/server/web"
 
 	"github.com/udistrital/academica_core_service/services"
 )
